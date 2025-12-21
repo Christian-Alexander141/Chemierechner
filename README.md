@@ -71,8 +71,4 @@ Ah, perfekt! Dann können wir die GitHub-Beschreibung anpassen, damit deutlich w
 * Erweiterung um weitere chemische Berechnungen
 * Verbesserte AI-Funktionen mit Kontextspeicherung
 
----
 
-Wenn du willst, kann ich jetzt noch eine **kompakte README-Version** schreiben, die auf GitHub sofort die wichtigsten Infos zeigt und in der der AI-Modus klar hervorgehoben wird.
-
-Willst du, dass ich diese kompakte Version erstelle?
