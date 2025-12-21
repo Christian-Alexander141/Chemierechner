@@ -1,0 +1,10 @@
+masse,m,kg;g
+Stoffmenge,n,mol
+Molare Masse,M,g/mol;kg/mol
+Volumen,V,m^3;L
+Dichte,ρ,kg/m^3;g/cm^3
+Druck,p,Pa;atm;bar;mmHg
+Temperatur,T,K;°C
+Frequenz,f,Hz
+Energie,E,J;kcal;kJ
+Arbeit,W,J
