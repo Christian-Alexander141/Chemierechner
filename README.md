@@ -1,6 +1,3 @@
-Ah, perfekt! Dann können wir die GitHub-Beschreibung anpassen, damit deutlich wird, dass der **AI-Modus externe Abhängigkeiten** hat. Hier ist die aktualisierte Version:
-
----
 
 # Chemierechner
 
