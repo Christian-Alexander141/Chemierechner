@@ -1,0 +1,1051 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chemierechner – Softwaredokumentation</title>
+<style>
+  :root {
+    --akzent: #16a34a;
+    --akzent-dunkel: #15803d;
+    --akzent-hell: #f0fdf4;
+    --akzent-rand: #bbf7d0;
+    --text: #111827;
+    --text-mittel: #374151;
+    --text-leise: #6b7280;
+    --rand: #e5e7eb;
+    --flaeche: #ffffff;
+    --hintergrund: #f5f6f8;
+    --code-bg: #f3f4f6;
+    --code-block-bg: #0f172a;
+    --code-block-text: #e2e8f0;
+    --warn-bg: #fffbeb;
+    --warn-rand: #fde68a;
+    --warn-text: #92400e;
+    --sidebar-breite: 280px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --akzent: #22c55e;
+      --akzent-dunkel: #4ade80;
+      --akzent-hell: #052e16;
+      --akzent-rand: #166534;
+      --text: #f3f4f6;
+      --text-mittel: #d1d5db;
+      --text-leise: #9ca3af;
+      --rand: #2a2f3a;
+      --flaeche: #151922;
+      --hintergrund: #0e1117;
+      --code-bg: #1f2430;
+      --code-block-bg: #0a0d14;
+      --warn-bg: #2a1f05;
+      --warn-rand: #78590f;
+      --warn-text: #fcd34d;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Ubuntu, "Noto Sans", sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--text);
+    background: var(--hintergrund);
+  }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: var(--sidebar-breite);
+    background: var(--flaeche);
+    border-right: 1px solid var(--rand);
+    overflow-y: auto;
+    padding: 24px 16px 40px;
+  }
+  .sidebar .marke {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 8px 20px;
+    font-weight: 700; font-size: 18px;
+  }
+  .sidebar .marke img { width: 32px; height: auto; }
+  .sidebar .marke small { display: block; font-weight: 400; font-size: 12px; color: var(--text-leise); }
+  .sidebar nav ol { list-style: none; margin: 0; padding: 0; counter-reset: kap; }
+  .sidebar nav > ol > li { counter-increment: kap; }
+  .sidebar nav a {
+    display: block;
+    padding: 7px 12px;
+    border-radius: 8px;
+    color: var(--text-mittel);
+    text-decoration: none;
+    font-size: 14.5px;
+  }
+  .sidebar nav > ol > li > a::before {
+    content: counter(kap) ". ";
+    color: var(--text-leise);
+  }
+  .sidebar nav a:hover { background: var(--hintergrund); }
+  .sidebar nav a.aktiv {
+    background: var(--akzent-hell);
+    color: var(--akzent-dunkel);
+    font-weight: 600;
+  }
+  .sidebar nav ol ol { padding-left: 14px; margin: 2px 0 6px; }
+  .sidebar nav ol ol a { font-size: 13.5px; padding: 4px 12px; color: var(--text-leise); }
+  .menue-knopf { display: none; }
+
+  /* ---------- Inhalt ---------- */
+  main {
+    margin-left: var(--sidebar-breite);
+    padding: 48px 56px 96px;
+  }
+  .inhalt { max-width: 900px; margin: 0 auto; }
+  header.titel { margin-bottom: 40px; }
+  header.titel h1 { font-size: 36px; line-height: 1.2; margin: 0 0 8px; }
+  header.titel p { color: var(--text-leise); margin: 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .meta span {
+    font-size: 13px; padding: 3px 10px; border-radius: 999px;
+    background: var(--flaeche); border: 1px solid var(--rand); color: var(--text-mittel);
+  }
+
+  section.kapitel {
+    background: var(--flaeche);
+    border: 1px solid var(--rand);
+    border-radius: 14px;
+    padding: 32px 36px;
+    margin-bottom: 28px;
+  }
+  h2 { font-size: 26px; margin: 0 0 16px; line-height: 1.3; }
+  h2 .nr { color: var(--akzent); margin-right: 6px; }
+  h3 { font-size: 19px; margin: 32px 0 10px; }
+  h4 { font-size: 16px; margin: 24px 0 8px; }
+  p { margin: 0 0 14px; }
+  a { color: var(--akzent-dunkel); }
+  ul, ol { padding-left: 22px; margin: 0 0 14px; }
+  li { margin-bottom: 4px; }
+
+  code {
+    font-family: ui-monospace, "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+    font-size: 0.88em;
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 5px;
+  }
+  pre {
+    background: var(--code-block-bg);
+    color: var(--code-block-text);
+    padding: 18px 20px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-size: 14px;
+    line-height: 1.55;
+    margin: 0 0 18px;
+  }
+  pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+  .k { color: #7dd3fc; }   /* Schlüsselwort */
+  .s { color: #86efac; }   /* String */
+  .c { color: #94a3b8; font-style: italic; } /* Kommentar */
+  .t { color: #fcd34d; }   /* Typ */
+
+  table { width: 100%; border-collapse: collapse; margin: 0 0 18px; font-size: 14.5px; }
+  .tabelle-rahmen { overflow-x: auto; margin-bottom: 18px; border: 1px solid var(--rand); border-radius: 10px; }
+  .tabelle-rahmen table { margin: 0; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rand); vertical-align: top; }
+  th { background: var(--hintergrund); font-size: 13px; color: var(--text-leise); font-weight: 600; }
+  tr:last-child td { border-bottom: none; }
+  td code { white-space: nowrap; }
+
+  .hinweis, .warnung {
+    border-radius: 10px; padding: 14px 18px; margin: 0 0 18px; border: 1px solid;
+  }
+  .hinweis { background: var(--akzent-hell); border-color: var(--akzent-rand); }
+  .warnung { background: var(--warn-bg); border-color: var(--warn-rand); color: var(--warn-text); }
+  .hinweis strong, .warnung strong { display: block; margin-bottom: 2px; }
+  .hinweis p:last-child, .warnung p:last-child { margin-bottom: 0; }
+
+  figure { margin: 0 0 22px; }
+  figure img {
+    width: 100%; height: auto; display: block;
+    border: 1px solid var(--rand); border-radius: 10px;
+  }
+  figcaption { font-size: 13.5px; color: var(--text-leise); margin-top: 8px; text-align: center; }
+  .bilder-zwei { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* Architektur-Diagramm */
+  .schichten { display: grid; gap: 10px; margin: 8px 0 22px; }
+  .schicht {
+    border: 1px solid var(--rand); border-radius: 10px; padding: 14px 16px;
+    background: var(--hintergrund);
+  }
+  .schicht .name { font-weight: 700; }
+  .schicht .rolle { font-size: 13.5px; color: var(--text-leise); }
+  .schicht .pakete { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .schicht .pakete code { background: var(--flaeche); border: 1px solid var(--rand); }
+  .schicht.oben { border-color: var(--akzent-rand); background: var(--akzent-hell); }
+  .pfeil { text-align: center; color: var(--text-leise); font-size: 13px; }
+
+  .schritte { counter-reset: schritt; list-style: none; padding-left: 0; }
+  .schritte > li {
+    counter-increment: schritt; position: relative; padding-left: 44px; margin-bottom: 18px;
+  }
+  .schritte > li::before {
+    content: counter(schritt);
+    position: absolute; left: 0; top: 0;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--akzent); color: #fff; font-weight: 700; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .ablauf { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 18px; }
+  .ablauf span {
+    background: var(--hintergrund); border: 1px solid var(--rand); border-radius: 8px;
+    padding: 6px 10px; font-size: 14px;
+  }
+  .ablauf b { color: var(--text-leise); font-weight: 400; }
+
+  footer { text-align: center; color: var(--text-leise); font-size: 13px; margin-top: 40px; }
+
+  /* ---------- Mobil ---------- */
+  @media (max-width: 900px) {
+    .sidebar {
+      transform: translateX(-100%);
+      transition: transform .2s ease;
+      z-index: 20;
+    }
+    body.menue-offen .sidebar { transform: none; box-shadow: 0 0 40px rgba(0,0,0,.2); }
+    .menue-knopf {
+      display: flex; align-items: center; gap: 8px;
+      position: fixed; top: 12px; left: 12px; z-index: 30;
+      background: var(--akzent); color: #fff; border: none; border-radius: 8px;
+      padding: 8px 14px; font: inherit; font-weight: 600; cursor: pointer;
+    }
+    main { margin-left: 0; padding: 72px 16px 64px; }
+    section.kapitel { padding: 22px 18px; }
+    header.titel h1 { font-size: 28px; }
+    .bilder-zwei { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- Druck ---------- */
+  @media print {
+    .sidebar, .menue-knopf { display: none; }
+    main { margin: 0; padding: 0; }
+    body { background: #fff; color: #000; }
+    section.kapitel { border: none; padding: 0; page-break-inside: auto; }
+    h2 { page-break-before: always; }
+    pre { white-space: pre-wrap; }
+  }
+</style>
+</head>
+<body>
+
+<button class="menue-knopf" type="button" aria-label="Inhaltsverzeichnis öffnen">☰ Inhalt</button>
+
+<aside class="sidebar">
+  <div class="marke">
+    <img src="../Chemierechner/Chemierechner/src/icon.png" alt="">
+    <div>Chemierechner<small>Softwaredokumentation</small></div>
+  </div>
+  <nav>
+    <ol>
+      <li><a href="#ueberblick">Überblick</a></li>
+      <li><a href="#installation">Installation &amp; Start</a>
+        <ol>
+          <li><a href="#voraussetzungen">Voraussetzungen</a></li>
+          <li><a href="#start-vscode">Start in VS Code</a></li>
+          <li><a href="#start-terminal">Start im Terminal</a></li>
+        </ol>
+      </li>
+      <li><a href="#bedienung">Bedienung</a></li>
+      <li><a href="#struktur">Projektstruktur</a></li>
+      <li><a href="#architektur">Architektur</a>
+        <ol>
+          <li><a href="#schichten">Schichten</a></li>
+          <li><a href="#programmstart">Programmstart</a></li>
+          <li><a href="#ereignisfluss">Ereignisfluss</a></li>
+        </ol>
+      </li>
+      <li><a href="#gui">GUI-Grundgerüst (<code>gui</code>)</a>
+        <ol>
+          <li><a href="#karte">Karte</a></li>
+          <li><a href="#formelkarte">Formelkarte</a></li>
+          <li><a href="#bausteine">Bausteine</a></li>
+          <li><a href="#intern">Interne Klassen</a></li>
+        </ol>
+      </li>
+      <li><a href="#karten">Karten (<code>karten</code>)</a></li>
+      <li><a href="#fachlogik">Fachlogik</a></li>
+      <li><a href="#anleitung">Neue Karte anlegen</a>
+        <ol>
+          <li><a href="#anleitung-formel">Formelkarte</a></li>
+          <li><a href="#anleitung-frei">Freie Karte</a></li>
+          <li><a href="#anleitung-tipps">Tipps &amp; typische Fehler</a></li>
+        </ol>
+      </li>
+      <li><a href="#fehler">Fehlerbehandlung</a></li>
+      <li><a href="#zahlen">Zahlenformat</a></li>
+      <li><a href="#styling">Styling</a></li>
+      <li><a href="#konfiguration">Build &amp; Konfiguration</a></li>
+      <li><a href="#grenzen">Bekannte Einschränkungen</a></li>
+      <li><a href="#ausblick">Ausblick</a></li>
+    </ol>
+  </nav>
+</aside>
+
+<main>
+<div class="inhalt">
+
+<header class="titel">
+  <h1>Chemierechner</h1>
+  <p>Softwaredokumentation: Aufbau, Bedienung und Erweiterung</p>
+  <div class="meta">
+    <span>Stand: 31.10.2026</span>
+    <span>Java 25</span>
+    <span>JavaFX 25.0.4</span>
+    <span>Lizenz: siehe LICENSE</span>
+  </div>
+</header>
+
+<!-- ===================================================== -->
+<section class="kapitel" id="ueberblick">
+  <h2><span class="nr">1</span>Überblick</h2>
+  <p>
+    Der <strong>Chemierechner</strong> ist eine Desktop-Anwendung in Java mit JavaFX-Oberfläche.
+    Mit ihm lassen sich typische Rechnungen aus dem Chemieunterricht und Studium erledigen:
+    Stoffmengen, Anteile, Partialdrücke, Titrationskurven. Außerdem gibt es einen AI-Modus, der
+    Fragen an ein lokal laufendes Sprachmodell weitergibt.
+  </p>
+  <p>
+    Die Oberfläche ist so gebaut, dass neue Rechner ohne JavaFX-Kenntnisse ergänzt werden können:
+    Jeder Rechner ist eine kleine Klasse, die nur beschreibt, <em>welche</em> Eingaben und Ergebnisse
+    es gibt. Wie das aussieht, entscheidet das Grundgerüst im Paket <code>gui</code>.
+  </p>
+
+  <h3>Funktionen</h3>
+  <div class="tabelle-rahmen">
+  <table>
+    <tr><th>Bereich</th><th>Funktion</th></tr>
+    <tr><td>Formeln</td><td>Partialdruck, Masseanteil, Volumenanteil, molares Volumen, Stoffmenge, molare Masse</td></tr>
+    <tr><td>Titration</td><td>Messpunkte erfassen, in einer Tabelle bearbeiten, Titrationskurve wird automatisch gezeichnet</td></tr>
+    <tr><td>AI&#8209;Modus</td><td>Chemische Fragen an ein lokales Sprachmodell über <a href="https://ollama.com">Ollama</a></td></tr>
+    <tr><td>Komfort</td><td>Komma oder Punkt als Dezimaltrennzeichen, Enter startet die Berechnung, Ergebnis per Klick kopieren, verständliche Fehlermeldungen</td></tr>
+  </table>
+  </div>
+
+  <figure>
+    <img src="bilder/stoffmenge.png" alt="Hauptfenster mit Seitenleiste und der Karte Stoffmenge">
+    <figcaption>Abb. 1: Hauptfenster mit Seitenleiste; rechts die Karte „Stoffmenge“ nach einer Berechnung</figcaption>
+  </figure>
+</section>
+
+<!-- ===================================================== -->
+<section class="kapitel" id="installation">
+  <h2><span class="nr">2</span>Installation &amp; Start</h2>
+
+  <h3 id="voraussetzungen">Voraussetzungen</h3>
+  <div class="tabelle-rahmen">
+  <table>
+    <tr><th>Komponente</th><th>Version</th><th>Erwarteter Ort</th></tr>
+    <tr><td>JDK (OpenJDK)</td><td>25</td><td><code>/usr/lib/jvm/java-25-openjdk-amd64</code></td></tr>
+    <tr><td>JavaFX SDK</td><td>25.0.4</td><td><code>~/javafx-sdk-25.0.4</code></td></tr>
+    <tr><td>VS Code (optional)</td><td>aktuell</td><td>mit „Extension Pack for Java“</td></tr>
+    <tr><td>Ollama (nur AI-Modus)</td><td>aktuell</td><td>läuft auf <code>http://localhost:11434</code></td></tr>
+  </table>
+  </div>
+  <p>
+    JavaFX ist seit Java 11 nicht mehr Teil des JDK und muss separat heruntergeladen werden
+    (<a href="https://gluonhq.com/products/javafx/">gluonhq.com/products/javafx</a>).
+    Das SDK wird einfach entpackt; Pfade zu ihm stehen in <code>.vscode/settings.json</code>,
+    <code>.vscode/launch.json</code> und <code>run.sh</code>. Liegt es woanders, müssen diese drei Stellen angepasst werden.
+  </p>
+  <p>Für den AI-Modus muss zusätzlich das Modell installiert sein:</p>
+  <pre><code>ollama pull cas/teuken-7b-q4km
+ollama serve</code></pre>
+
+  <h3 id="start-vscode">Start in VS Code</h3>
+  <ol class="schritte">
+    <li>Den Repository-Ordner <code>Chemierechner</code> (oberste Ebene) in VS Code öffnen.</li>
+    <li>Ansicht „Ausführen und Debuggen“ öffnen (<code>Strg+Shift+D</code>).</li>
+    <li>Im Dropdown <strong>„Chemierechner - STARTEN“</strong> wählen und <strong>F5</strong> drücken.</li>
+  </ol>
+  <div class="hinweis">
+    <strong>Werden JavaFX-Importe rot markiert?</strong>
+    <p>Dann hat VS Code die Einstellungen noch nicht übernommen: <code>Strg+Shift+P</code> →
+    „Java: Clean Java Language Server Workspace“ → „Restart and delete“.</p>
+  </div>
+
+  <h3 id="start-terminal">Start im Terminal</h3>
+  <pre><code>cd ~/Dokumente/Github/Chemierechner/Chemierechner
+./run.sh</code></pre>
+  <p>
+    Das Skript löscht <code>bin/</code>, kompiliert alle Quellen neu, kopiert die Ressourcen
+    (CSS, Icon, Textdateien) und startet anschließend <code>gui.ChemierechnerApp</code>.
+  </p>
+</section>
+
+<!-- ===================================================== -->
+<section class="kapitel" id="bedienung">
+  <h2><span class="nr">3</span>Bedienung</h2>
+  <p>
+    Links befindet sich die <strong>Seitenleiste</strong> mit allen Rechnern. Ein Klick wechselt die Ansicht;
+    eingegebene Werte bleiben beim Wechseln erhalten.
+  </p>
+  <h3>Formel-Rechner</h3>
+  <ul>
+    <li>Werte in die Felder eingeben. Die Einheit steht rechts im Feld.</li>
+    <li><code>0,5</code>, <code>0.5</code> und <code>6,022e23</code> werden alle verstanden.</li>
+    <li><strong>Berechnen</strong> klicken oder in einem Feld <strong>Enter</strong> drücken.</li>
+    <li>Ein Klick auf ein grünes Ergebnisfeld kopiert den Wert in die Zwischenablage.</li>
+  </ul>
+  <h3>Titration</h3>
+  <ul>
+    <li>Volumen und pH-Wert eingeben, dann „Messpunkt hinzufügen“ (oder Enter im pH-Feld).</li>
+    <li>Werte in der Tabelle per <strong>Doppelklick</strong> ändern.</li>
+    <li>Zeile löschen: auswählen und <strong>Entf</strong> drücken oder Rechtsklick → „Zeile löschen“.</li>
+    <li>Die Kurve aktualisiert sich nach jeder Änderung automatisch.</li>
+  </ul>
+  <h3>AI-Modus</h3>
+  <ul>
+    <li>Frage eingeben, „Senden“ oder Enter. Während das Modell antwortet, erscheint unten „Bitte warten …“ und die Buttons sind gesperrt.</li>
+  </ul>
+  <div class="bilder-zwei">
+    <figure>
+      <img src="bilder/titration.png" alt="Karte Titration mit Messpunkten und Kurve">
+      <figcaption>Abb. 2: Titration mit Tabelle und automatisch gezeichneter Kurve</figcaption>
+    </figure>
+    <figure>
+      <img src="bilder/ai-modus.png" alt="Karte AI-Modus">
+      <figcaption>Abb. 3: AI-Modus</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ===================================================== -->
+<section class="kapitel" id="struktur">
+  <h2><span class="nr">4</span>Projektstruktur</h2>
+<pre><code>Chemierechner/                      <span class="c">Repository-Wurzel</span>
+├── .vscode/                        <span class="c">VS-Code-Einstellungen (Java, JavaFX, Startkonfiguration)</span>
+├── .gitignore                      <span class="c">schließt bin/ und *.class aus</span>
+├── Doku/                           <span class="c">diese Dokumentation</span>
+├── README.md
+└── Chemierechner/
+    ├── run.sh                      <span class="c">kompilieren + starten im Terminal</span>
+    └── Chemierechner/              <span class="c">eigentliches Java-Projekt</span>
+        ├── bin/                    <span class="c">Build-Ausgabe (wird erzeugt, nicht im Git)</span>
+        └── src/
+            ├── gui/                <span class="c">GUI-Grundgerüst – muss nicht angefasst werden</span>
+            ├── karten/             <span class="c">die einzelnen Rechner + Karten.java (Liste)</span>
+            ├── Berechnungen/       <span class="c">Formeln (reine Fachlogik)</span>
+            ├── Titrationen/        <span class="c">Titrationsdaten</span>
+            ├── APIcalls/           <span class="c">Anbindung an Ollama</span>
+            ├── Konstanten/         <span class="c">physikalische Konstanten</span>
+            ├── Groesen/            <span class="c">Liste physikalischer Größen + Einheiten</span>
+            ├── ress/style.css      <span class="c">Aussehen der Oberfläche</span>
+            └── icon.png            <span class="c">Programm-Icon</span></code></pre>
+</section>
+
+<!-- ===================================================== -->
+<section class="kapitel" id="architektur">
+  <h2><span class="nr">5</span>Architektur</h2>
+
+  <h3 id="schichten">Schichten</h3>
+  <p>
+    Das Programm ist in drei Schichten aufgeteilt. Jede Schicht kennt nur die darunterliegende.
+    Dadurch bleibt die Fachlogik frei von Oberflächencode und lässt sich unabhängig testen.
+  </p>
+  <div class="schichten">
+    <div class="schicht oben">
+      <div class="name">Karten</div>
+      <div class="rolle">Beschreiben die einzelnen Rechner: welche Eingaben, welche Ergebnisse, was beim Klick passiert. Kein JavaFX.</div>
+      <div class="pakete"><code>karten</code></div>
+    </div>
+    <div class="pfeil">↓ benutzt</div>
+    <div class="schicht">
+      <div class="name">GUI-Grundgerüst</div>
+      <div class="rolle">Fenster, Seitenleiste, Layout, Bausteine, Fehleranzeige. Kapselt JavaFX vollständig.</div>
+      <div class="pakete"><code>gui</code></div>
+    </div>
+    <div class="pfeil">↓ Karten rufen zusätzlich auf</div>
+    <div class="schicht">
+      <div class="name">Fachlogik</div>
+      <div class="rolle">Chemische Formeln, Datenhaltung, Netzwerkzugriff. Weiß nichts von der Oberfläche.</div>
+      <div class="pakete"><code>Berechnungen</code><code>Titrationen</code><code>APIcalls</code><code>Konstanten</code><code>Groesen</code></div>
+    </div>
+  </div>
+  <p>
+    Einzige Ausnahme von „nur nach unten“: <code>gui.ChemierechnerApp</code> holt sich beim Start die
+    Liste der Karten aus <code>karten.Karten</code>. Diese eine Stelle verbindet beide Pakete.
+  </p>
+
+  <h3 id="programmstart">Programmstart</h3>
+  <div class="ablauf">
+    <span><code>ChemierechnerApp.main()</code></span><b>→</b>
+    <span>JavaFX startet</span><b>→</b>
+    <span><code>start(stage)</code></span><b>→</b>
+    <span><code>Karten.alle()</code></span><b>→</b>
+    <span>Konstruktoren der Karten bauen ihren Inhalt</span><b>→</b>
+    <span>Seitenleiste + erste Karte anzeigen</span>
+  </div>
+  <p>
+    Alle Karten werden beim Start einmal erzeugt und danach nur noch ein- und ausgeblendet.
+    Deshalb bleiben Eingaben beim Wechseln erhalten. Wirft ein Karten-Konstruktor eine Exception,
+    startet das Programm nicht; die Ursache steht dann in der Konsole.
+  </p>
+
+  <h3 id="ereignisfluss">Ereignisfluss bei einem Klick</h3>
+  <div class="ablauf">
+    <span>Klick / Enter</span><b>→</b>
+    <span><code>Karte.ausfuehren(aktion)</code></span><b>→</b>
+    <span>alte Meldung ausblenden</span><b>→</b>
+    <span><code>aktion.run()</code></span><b>→</b>
+    <span>bei Exception: Meldung unten anzeigen</span>
+  </div>
+  <p>
+    Jede Aktion, die über einen Button, Enter oder eine Tabellenänderung ausgelöst wird, läuft durch
+    <code>ausfuehren()</code>. Dort werden alle Exceptions abgefangen. Die Karte selbst muss also kein
+    <code>try/catch</code> schreiben. Details in <a href="#fehler">Kapitel 10</a>.
+  </p>
+</section>
+
+<!-- ===================================================== -->
+<section class="kapitel" id="gui">
+  <h2><span class="nr">6</span>GUI-Grundgerüst (<code>gui</code>)</h2>
+  <p>
+    Das Paket <code>gui</code> enthält alles, was mit JavaFX zu tun hat. Öffentlich (<code>public</code> bzw.
+    <code>protected</code>) sind nur die Methoden, die Karten brauchen; JavaFX-Typen tauchen dort nirgends auf.
+  </p>
+
+  <h3 id="karte">Klasse <code>Karte</code></h3>
+  <p>
+    Abstrakte Basisklasse jeder Karte. Eine Unterklasse ruft im Konstruktor die folgenden Methoden auf;
+    die Bausteine erscheinen in genau dieser Reihenfolge auf dem Bildschirm.
+  </p>
+  <h4>Aufbau-Methoden</h4>
+  <div class="tabelle-rahmen">
+  <table>
+    <tr><th>Methode</th><th>Rückgabe</th><th>Beschreibung</th></tr>
+    <tr><td><code>Karte(String titel)</code></td><td>–</td><td>Konstruktor; der Titel erscheint in Seitenleiste und Überschrift.</td></tr>
+    <tr><td><code>beschreibung(String text)</code></td><td>–</td><td>Grauer Text unter der Überschrift, z.B. die Formel.</td></tr>
+    <tr><td><code>abschnitt(String titel)</code></td><td>–</td><td>Beginnt einen neuen weißen Kasten mit Überschrift. Ohne Aufruf wird automatisch ein Kasten ohne Überschrift angelegt.</td></tr>
+    <tr><td><code>zahlenfeld(String beschriftung)</code><br><code>zahlenfeld(String beschriftung, String einheit)</code></td><td><code>Zahlenfeld</code></td><td>Eingabefeld für eine Zahl; die Einheit steht rechts im Feld.</td></tr>
+    <tr><td><code>textfeld(String beschriftung)</code><br><code>textfeld(String beschriftung, String platzhalter)</code></td><td><code>Eingabefeld</code></td><td>Einzeiliges Textfeld über die volle Breite.</td></tr>
+    <tr><td><code>button(String text, Runnable aktion)</code></td><td>–</td><td>Button, der beim Klick <code>aktion</code> ausführt.</td></tr>
+    <tr><td><code>textbereich()</code></td><td><code>Textausgabe</code></td><td>Mehrzeiliger, nicht editierbarer Textbereich.</td></tr>
+    <tr><td><code>tabelle(String... spalten)</code></td><td><code>Tabelle</code></td><td>Tabelle mit Zahlen, eine Spalte pro Name.</td></tr>
+    <tr><td><code>diagramm(String xAchse, String yAchse)</code></td><td><code>Diagramm</code></td><td>Liniendiagramm mit Achsenbeschriftungen.</td></tr>
+  </table>
+  </div>
+
+  <h4>Layout-Regeln</h4>
+  <ul>
+    <li>Mehrere <code>zahlenfeld()</code>-Aufrufe direkt hintereinander landen <strong>zweispaltig</strong> nebeneinander.</li>
+    <li>Mehrere <code>button()</code>-Aufrufe direkt hintereinander landen <strong>in einer Reihe</strong>.</li>
+    <li>Alle anderen Bausteine nehmen die volle Breite ein und beenden eine laufende Feld- oder Button-Gruppe.</li>
+    <li>Der Inhalt ist maximal 920 px breit und wird zentriert; bei Bedarf erscheint ein Scrollbalken.</li>
+  </ul>
+
+  <h4>Aktions-Methoden</h4>
+  <div class="tabelle-rahmen">
+  <table>
+    <tr><th>Methode</th><th>Beschreibung</th></tr>
+    <tr><td><code>&lt;T&gt; imHintergrund(Callable&lt;T&gt; aufgabe, Consumer&lt;T&gt; danach)</code></td>
+        <td>Führt <code>aufgabe</code> in einem eigenen Thread aus, damit das Fenster nicht einfriert.
+            Danach wird <code>danach</code> mit dem Ergebnis wieder im JavaFX-Thread aufgerufen.
+            Während der Ausführung sind alle Buttons der Karte gesperrt und unten erscheint „Bitte warten …“.
+            Exceptions der Aufgabe werden als Meldung angezeigt.</td></tr>
+    <tr><td><code>info(String text)</code></td><td>Zeigt für 2,5 Sekunden einen dunklen Hinweis unten im Fenster.</td></tr>
+  </table>
+  </div>
+
+  <h3 id="formelkarte">Klasse <code>Formelkarte</code></h3>
+  <p>
+    Spezialisierung von <code>Karte</code> für das häufigste Muster: Zahlen eingeben → <strong>Berechnen</strong> → Ergebnis.
+    Der Aufbau (Eingaberaster, Button, Ergebnisraster) wird schon im Konstruktor der Formelkarte angelegt.
+    Deshalb ist die Reihenfolge von <code>eingabe()</code> und <code>ergebnis()</code> egal.
+  </p>
+  <div class="tabelle-rahmen">
+  <table>
+    <tr><th>Methode</th><th>Beschreibung</th></tr>
+    <tr><td><code>eingabe(String kuerzel, String beschriftung)</code><br><code>eingabe(String kuerzel, String beschriftung, String einheit)</code></td>
+        <td>Legt ein Zahlenfeld an. Über das <em>Kürzel</em> wird der Wert in der Formel abgerufen. Kürzel müssen innerhalb einer Karte eindeutig sein.</td></tr>
+    <tr><td><code>ergebnis(String beschriftung, Formel formel)</code><br><code>ergebnis(String beschriftung, String einheit, Formel formel)</code></td>
+        <td>Legt ein Ergebnisfeld an. Es darf mehrere geben; alle werden mit einem Klick berechnet.</td></tr>
+  </table>
+  </div>
+  <p><code>Formel</code> ist ein funktionales Interface und wird fast immer als Lambda geschrieben:</p>
+  <pre><code><span class="k">public interface</span> <span class="t">Formel</span> {
+    <span class="k">double</span> berechne(<span class="t">Werte</span> werte);
+}
+
+<span class="c">// Verwendung:</span>
+ergebnis(<span class="s">"Stoffmenge"</span>, <span class="s">"mol"</span>, w -&gt; w.get(<span class="s">"m"</span>) / w.get(<span class="s">"M"</span>));</code></pre>
+  <p>Beim Berechnen passiert Folgendes:</p>
+  <ol>
+    <li>Alle Ergebnisfelder werden auf „–“ zurückgesetzt.</li>
+    <li>Alle Eingaben werden gelesen. Bei einem leeren oder ungültigen Feld bricht die Berechnung mit einer Meldung ab.</li>
+    <li>Alle Formeln werden ausgewertet. Ist ein Ergebnis unendlich oder <code>NaN</code> (z.B. durch Division durch 0), erscheint „Das Ergebnis ist nicht definiert – wurde durch 0 geteilt?“.</li>
+    <li>Erst wenn alle Formeln erfolgreich waren, werden die Ergebnisse angezeigt.</li>
+  </ol>
+  <p><code>Werte</code> hat nur eine Methode: <code>double get(String kuerzel)</code>. Ein unbekanntes Kürzel führt zu einer Meldung mit Hinweis auf das fehlende <code>eingabe(...)</code>.</p>
+
+  <h3 id="bausteine">Bausteine</h3>
+  <p>Die Bausteine werden von den Aufbau-Methoden erzeugt. Ihre Konstruktoren sind absichtlich nicht öffentlich.</p>
+
+  <h4><code>Zahlenfeld</code></h4>
+  <div class="tabelle-rahmen">
+  <table>
+    <tr><th>Methode</th><th>Beschreibung</th></tr>
+    <tr><td><code>double wert()</code></td><td>Liest die Zahl. Wirft bei leerem Feld oder ungültiger Eingabe eine <code>Fehlermeldung</code> mit Feldnamen.</td></tr>
+    <tr><td><code>boolean istLeer()</code></td><td>Prüft, ob das Feld leer ist (ohne Fehlermeldung).</td></tr>
+    <tr><td><code>setWert(double wert)</code></td><td>Schreibt eine Zahl ins Feld.</td></tr>
+    <tr><td><code>leeren()</code></td><td>Löscht den Inhalt.</td></tr>
+    <tr><td><code>fokus()</code></td><td>Setzt den Cursor in das Feld.</td></tr>
+    <tr><td><code>beiEnter(Runnable aktion)</code></td><td>Aktion beim Drücken von Enter.</td></tr>
+  </table>
+  </div>
+
+  <h4><code>Eingabefeld</code></h4>
+  <div class="tabelle-rahmen">
+  <table>
+    <tr><th>Methode</th><th>Beschreibung</th></tr>
+    <tr><td><code>String text()</code></td><td>Eingegebener Text ohne Leerzeichen am Anfang/Ende.</td></tr>
+    <tr><td><code>setText(String)</code>, <code>leeren()</code>, <code>fokus()</code>, <code>beiEnter(Runnable)</code></td><td>wie beim Zahlenfeld</td></tr>
+  </table>
+  </div>
+
+  <h4><code>Textausgabe</code></h4>
+  <div class="tabelle-rahmen">
+  <table>
+    <tr><th>Methode</th><th>Beschreibung</th></tr>
+    <tr><td><code>String text()</code>, <code>setText(String)</code></td><td>Inhalt lesen bzw. ersetzen.</td></tr>
+    <tr><td><code>anhaengen(String)</code></td><td>Text am Ende anfügen.</td></tr>
+    <tr><td><code>leeren()</code></td><td>Inhalt löschen.</td></tr>
+  </table>
+  </div>
+
+  <h4><code>Tabelle</code></h4>
+  <div class="tabelle-rahmen">
+  <table>
+    <tr><th>Methode</th><th>Beschreibung</th></tr>
+    <tr><td><code>zeileHinzufuegen(double... werte)</code></td><td>Neue Zeile am Ende. Die Anzahl der Werte muss der Spaltenzahl entsprechen.</td></tr>
+    <tr><td><code>List&lt;double[]&gt; zeilen()</code></td><td>Kopie aller Zeilen; jede Zeile ist ein Array mit einem Wert pro Spalte.</td></tr>
+    <tr><td><code>leeren()</code></td><td>Alle Zeilen entfernen.</td></tr>
+    <tr><td><code>beiAenderung(Runnable aktion)</code></td><td>Wird nach jedem Hinzufügen, Bearbeiten und Löschen aufgerufen.</td></tr>
+  </table>
+  </div>
+  <p>
+    Benutzer können Zellen per Doppelklick bearbeiten. Eine ungültige Eingabe wird verworfen und mit
+    einer Meldung quittiert. Zeilen werden mit Entf oder über das Kontextmenü gelöscht.
+  </p>
+
+  <h4><code>Diagramm</code></h4>
+  <div class="tabelle-rahmen">
+  <table>
+    <tr><th>Methode</th><th>Beschreibung</th></tr>
+    <tr><td><code>zeichne(String name, List&lt;double[]&gt; punkte)</code></td><td>Ersetzt den Inhalt durch eine Kurve; jeder Punkt ist <code>{x, y}</code>. Die Punkte werden nach x sortiert verbunden.</td></tr>
+    <tr><td><code>leeren()</code></td><td>Kurve entfernen.</td></tr>
+  </table>
+  </div>
+
+  <h4><code>Fehlermeldung</code></h4>
+  <p>
+    Unterklasse von <code>RuntimeException</code>. Ihr Text wird dem Benutzer unverändert angezeigt.
+    Siehe <a href="#fehler">Fehlerbehandlung</a>.
+  </p>
+
+  <h3 id="intern">Interne Klassen</h3>
+  <p>Diese Klassen sind nur innerhalb von <code>gui</code> sichtbar und für Karten nicht relevant.</p>
+  <div class="tabelle-rahmen">
+  <table>
+    <tr><th>Klasse</th><th>Aufgabe</th></tr>
+    <tr><td><code>ChemierechnerApp</code></td><td>Hauptklasse (<code>main</code>). Baut Fenster, Seitenleiste und lädt CSS und Icon. Die Seitenleiste besteht aus <code>ToggleButton</code>s in einer <code>ToggleGroup</code>; ein erneuter Klick auf den aktiven Eintrag wählt ihn nicht ab.</td></tr>
+    <tr><td><code>Meldung</code></td><td>Die Einblendung unten im Fenster: Fehler (rot, 6 s), Info (dunkel, 2,5 s) oder „Bitte warten“ mit Ladeanzeige (bis zum Ende der Aufgabe). Ein Klick blendet sie aus.</td></tr>
+    <tr><td><code>Feldraster</code></td><td><code>GridPane</code> mit zwei gleich breiten Spalten; füllt zeilenweise.</td></tr>
+    <tr><td><code>Zahlenformat</code></td><td>Lesen und Formatieren von Zahlen, siehe <a href="#zahlen">Kapitel 11</a>.</td></tr>
+  </table>
+  </div>
+</section>
+
+<!-- ===================================================== -->
+<section class="kapitel" id="karten">
+  <h2><span class="nr">7</span>Karten (<code>karten</code>)</h2>
+  <p>
+    Welche Karten es gibt und in welcher Reihenfolge sie in der Seitenleiste stehen, legt
+    <code>karten.Karten.alle()</code> fest:
+  </p>
+  <pre><code><span class="k">public static</span> <span class="t">List</span>&lt;<span class="t">Karte</span>&gt; alle() {
+    <span class="k">return</span> <span class="t">List</span>.of(
+            <span class="k">new</span> PartialdruckKarte(),
+            <span class="k">new</span> MasseanteilKarte(),
+            <span class="k">new</span> VolumenanteilKarte(),
+            <span class="k">new</span> MolaresVolumenKarte(),
+            <span class="k">new</span> StoffmengeKarte(),
+            <span class="k">new</span> MolareMasseKarte(),
+            <span class="k">new</span> TitrationKarte(),
+            <span class="k">new</span> AiKarte()
+    );
+}</code></pre>
+
+  <h3>Formelkarten</h3>
+  <div class="tabelle-rahmen">
+  <table>
+    <tr><th>Karte</th><th>Formel</th><th>Eingaben (Kürzel)</th><th>Ergebnis</th></tr>
+    <tr><td>Partialdruck</td><td>p = x · p<sub>ges</sub></td><td>Gesamtdruck in bar (<code>p</code>), Stoffmengenanteil 0–1 (<code>x</code>)</td><td>Partialdruck in bar</td></tr>
+    <tr><td>Masseanteil</td><td>w = m<sub>K</sub> / m<sub>ges</sub></td><td>Masse Komponente in g (<code>m</code>), Gesamtmasse in g (<code>mGes</code>)</td><td>w und w in %</td></tr>
+    <tr><td>Volumenanteil</td><td>φ = V<sub>K</sub> / V<sub>ges</sub></td><td>Volumen Komponente in mL (<code>V</code>), Gesamtvolumen in mL (<code>VGes</code>)</td><td>φ und φ in %</td></tr>
+    <tr><td>Molares Volumen</td><td>V<sub>m</sub> = V / n</td><td>Volumen in L (<code>V</code>), Stoffmenge in mol (<code>n</code>)</td><td>V<sub>m</sub> in L/mol</td></tr>
+    <tr><td>Stoffmenge</td><td>n = m / M</td><td>Masse in g (<code>m</code>), molare Masse in g/mol (<code>M</code>)</td><td>n in mol</td></tr>
+    <tr><td>Molare Masse</td><td>M = m / n</td><td>Masse in g (<code>m</code>), Stoffmenge in mol (<code>n</code>)</td><td>M in g/mol</td></tr>
+  </table>
+  </div>
+  <p>
+    Bei Partialdruck, Masse- und Volumenanteil gelten die Einheiten als Vorschlag: Da sich die Einheiten
+    herauskürzen bzw. durchgereicht werden, funktioniert die Rechnung mit jeder einheitlichen Einheit.
+  </p>
+
+  <h3>Freie Karten</h3>
+  <h4><code>TitrationKarte</code></h4>
+  <ul>
+    <li>Abschnitt „Neuer Messpunkt“: zwei Zahlenfelder (Volumen in mL, pH-Wert) und ein Button.</li>
+    <li>Abschnitt „Messpunkte“: Tabelle mit den Spalten Volumen und pH, Button „Alle löschen“.</li>
+    <li>Abschnitt „Titrationskurve“: Diagramm.</li>
+    <li>pH-Werte außerhalb von 0–14 werden mit einer <code>Fehlermeldung</code> abgelehnt.</li>
+    <li>Über <code>messpunkte.beiAenderung(...)</code> wird nach jeder Änderung ein neues <code>Titration</code>-Objekt aus der Tabelle aufgebaut und die Kurve neu gezeichnet. Die Tabelle ist damit die einzige Datenquelle.</li>
+  </ul>
+  <h4><code>AiKarte</code></h4>
+  <ul>
+    <li>Textfeld für die Frage, Button „Senden“, Textbereich für die Antwort.</li>
+    <li>Die Anfrage läuft über <code>imHintergrund(...)</code>, damit das Fenster bedienbar bleibt.</li>
+    <li>Eine <code>ConnectException</code> (Ollama läuft nicht) wird in die verständliche Meldung „Keine Verbindung zu Ollama – läuft der Dienst? (ollama serve)“ übersetzt.</li>
+  </ul>
+</section>
+
+<!-- ===================================================== -->
+<section class="kapitel" id="fachlogik">
+  <h2><span class="nr">8</span>Fachlogik</h2>
+  <p>Die Fachklassen enthalten keinen GUI-Code und können unabhängig von der Oberfläche benutzt werden.</p>
+
+  <h3>Paket <code>Berechnungen</code></h3>
+  <div class="tabelle-rahmen">
+  <table>
+    <tr><th>Klasse</th><th>Methode</th><th>Formel</th></tr>
+    <tr><td><code>Partialdruck</code></td><td><code>berechnePartialdruck(gesamtDruck, anteil)</code></td><td>p = p<sub>ges</sub> · x</td></tr>
+    <tr><td><code>Masseanteil</code></td><td><code>berechneMasseanteil(masseKomponente, gesamtMasse)</code></td><td>w = m<sub>K</sub> / m<sub>ges</sub></td></tr>
+    <tr><td><code>Volumenanteil</code></td><td><code>berechneVolumenanteil(volumenKomponente, gesamtVolumen)</code></td><td>φ = V<sub>K</sub> / V<sub>ges</sub></td></tr>
+    <tr><td><code>molaresVolumen</code></td><td><code>berechneMolaresVolumen(volumen, stoffmenge)</code></td><td>V<sub>m</sub> = V / n</td></tr>
+    <tr><td><code>Stoffmenge</code></td><td><code>berechneStoffmenge(masse, molareMasse)</code></td><td>n = m / M</td></tr>
+    <tr><td><code>molareMasse</code></td><td><code>berechneMolareMasse(masse, stoffmenge)</code></td><td>M = m / n</td></tr>
+  </table>
+  </div>
+  <p>Alle Methoden nehmen und liefern <code>double</code> und prüfen ihre Eingaben nicht; die Prüfung übernimmt die Oberfläche.</p>
+
+  <h3>Paket <code>Titrationen</code></h3>
+  <p>
+    <code>Titration</code> speichert eine Messkurve als Liste von <code>double[] {volumen, pH}</code>.
+    <code>addpH(pH, volumen)</code> fügt einen Punkt hinzu (Achtung: pH zuerst), <code>getKurve()</code> liefert die Liste.
+  </p>
+
+  <h3>Paket <code>APIcalls</code></h3>
+  <p>
+    <code>modelAdapter.generate(String prompt)</code> schickt eine HTTP-POST-Anfrage an
+    <code>http://localhost:11434/api/generate</code> (Modell <code>cas/teuken-7b-q4km:latest</code>, <code>stream: false</code>)
+    und gibt das Feld <code>response</code> der JSON-Antwort zurück. JSON wird ohne Bibliothek per Zeichenkettensuche
+    gelesen und geschrieben. Der Verbindungs-Timeout beträgt 10 Sekunden. Modell und URL sind Konstanten am Anfang der Klasse.
+  </p>
+
+  <h3>Paket <code>Konstanten</code></h3>
+  <p><code>avogadroKonstante.getWert()</code> liefert N<sub>A</sub> = 6,02214076 · 10²³ mol⁻¹.</p>
+
+  <h3>Paket <code>Groesen</code></h3>
+  <p>
+    <code>groessen.txt</code> listet physikalische Größen im Format <code>Name,Symbol,Einheit1;Einheit2</code>,
+    z.B. <code>Druck,p,Pa;atm;bar;mmHg</code>. <code>GroessenReader</code> ist ein eigenständiges
+    Konsolenprogramm, das die Datei als Tabelle ausgibt. Es ist derzeit nicht in die Oberfläche eingebunden.
+  </p>
+</section>
+
+<!-- ===================================================== -->
+<section class="kapitel" id="anleitung">
+  <h2><span class="nr">9</span>Neue Karte anlegen</h2>
+  <p>Für jede neue Karte sind genau zwei Schritte nötig. Am Paket <code>gui</code> wird nichts geändert.</p>
+  <ol class="schritte">
+    <li>Neue Klasse in <code>src/karten/</code> anlegen, die von <code>Formelkarte</code> oder <code>Karte</code> erbt.</li>
+    <li>In <code>src/karten/Karten.java</code> eine Zeile <code>new MeineKarte(),</code> an der gewünschten Stelle ergänzen.</li>
+  </ol>
+
+  <h3 id="anleitung-formel">Beispiel: Formelkarte „Dichte“</h3>
+  <p>Optional zuerst die Formel als Fachklasse in <code>Berechnungen</code> ablegen:</p>
+  <pre><code><span class="k">package</span> Berechnungen;
+
+<span class="k">public class</span> <span class="t">Dichte</span> {
+
+    <span class="k">public double</span> berechneDichte(<span class="k">double</span> masse, <span class="k">double</span> volumen) {
+        <span class="c">// ρ = m / V</span>
+        <span class="k">return</span> masse / volumen;
+    }
+}</code></pre>
+  <p>Dann die Karte:</p>
+  <pre><code><span class="k">package</span> karten;
+
+<span class="k">import</span> Berechnungen.Dichte;
+<span class="k">import</span> gui.Formelkarte;
+
+<span class="k">public class</span> <span class="t">DichteKarte</span> <span class="k">extends</span> <span class="t">Formelkarte</span> {
+
+    <span class="k">public</span> DichteKarte() {
+        <span class="k">super</span>(<span class="s">"Dichte"</span>);
+        beschreibung(<span class="s">"ρ = m / V"</span>);
+        eingabe(<span class="s">"m"</span>, <span class="s">"Masse"</span>, <span class="s">"g"</span>);
+        eingabe(<span class="s">"V"</span>, <span class="s">"Volumen"</span>, <span class="s">"cm³"</span>);
+        ergebnis(<span class="s">"Dichte"</span>, <span class="s">"g/cm³"</span>,
+                w -&gt; <span class="k">new</span> Dichte().berechneDichte(w.get(<span class="s">"m"</span>), w.get(<span class="s">"V"</span>)));
+    }
+}</code></pre>
+  <p>Und eintragen:</p>
+  <pre><code><span class="k">return</span> <span class="t">List</span>.of(
+        ...
+        <span class="k">new</span> MolareMasseKarte(),
+        <span class="k">new</span> DichteKarte(),      <span class="c">// neu</span>
+        <span class="k">new</span> TitrationKarte(),
+        ...
+);</code></pre>
+
+  <h3 id="anleitung-frei">Beispiel: freie Karte</h3>
+  <p>
+    Wenn das Formel-Muster nicht passt, erbt die Karte direkt von <code>Karte</code>. Bewährt hat sich:
+    Bausteine als Felder speichern, Aktionen als eigene Methoden schreiben und per <code>this::methode</code> übergeben.
+  </p>
+  <pre><code><span class="k">package</span> karten;
+
+<span class="k">import</span> gui.Fehlermeldung;
+<span class="k">import</span> gui.Karte;
+<span class="k">import</span> gui.Tabelle;
+<span class="k">import</span> gui.Zahlenfeld;
+
+<span class="k">public class</span> <span class="t">VerduennungKarte</span> <span class="k">extends</span> <span class="t">Karte</span> {
+
+    <span class="k">private final</span> <span class="t">Zahlenfeld</span> c1;
+    <span class="k">private final</span> <span class="t">Zahlenfeld</span> v1;
+    <span class="k">private final</span> <span class="t">Zahlenfeld</span> c2;
+    <span class="k">private final</span> <span class="t">Tabelle</span> verlauf;
+
+    <span class="k">public</span> VerduennungKarte() {
+        <span class="k">super</span>(<span class="s">"Verdünnung"</span>);
+        beschreibung(<span class="s">"c₁ · V₁ = c₂ · V₂  –  benötigtes Endvolumen berechnen"</span>);
+
+        abschnitt(<span class="s">"Eingaben"</span>);
+        c1 = zahlenfeld(<span class="s">"Ausgangskonzentration"</span>, <span class="s">"mol/L"</span>);
+        v1 = zahlenfeld(<span class="s">"Ausgangsvolumen"</span>, <span class="s">"mL"</span>);
+        c2 = zahlenfeld(<span class="s">"Zielkonzentration"</span>, <span class="s">"mol/L"</span>);
+        button(<span class="s">"Berechnen"</span>, <span class="k">this</span>::berechnen);
+
+        abschnitt(<span class="s">"Bisherige Rechnungen"</span>);
+        verlauf = tabelle(<span class="s">"c₁"</span>, <span class="s">"V₁"</span>, <span class="s">"c₂"</span>, <span class="s">"V₂"</span>);
+    }
+
+    <span class="k">private void</span> berechnen() {
+        <span class="k">double</span> c2Wert = c2.wert();
+        <span class="k">if</span> (c2Wert &gt;= c1.wert()) {
+            <span class="k">throw new</span> <span class="t">Fehlermeldung</span>(<span class="s">"Beim Verdünnen muss die Zielkonzentration kleiner sein."</span>);
+        }
+        <span class="k">double</span> v2 = c1.wert() * v1.wert() / c2Wert;
+        verlauf.zeileHinzufuegen(c1.wert(), v1.wert(), c2Wert, v2);
+        info(<span class="s">"Endvolumen: "</span> + v2 + <span class="s">" mL"</span>);
+    }
+}</code></pre>
+
+  <h3 id="anleitung-tipps">Tipps &amp; typische Fehler</h3>
+  <div class="tabelle-rahmen">
+  <table>
+    <tr><th>Problem</th><th>Ursache / Lösung</th></tr>
+    <tr><td>Karte erscheint nicht in der Seitenleiste</td><td>In <code>Karten.alle()</code> eingetragen?</td></tr>
+    <tr><td>Programm startet nicht, Exception in der Konsole</td><td>Fehler im Konstruktor einer Karte, z.B. doppeltes Kürzel bei <code>eingabe()</code>. Der Stacktrace nennt die Klasse.</td></tr>
+    <tr><td>„Unbekanntes Kürzel …“</td><td>Tippfehler in <code>w.get("…")</code>: Groß-/Kleinschreibung muss exakt zur <code>eingabe()</code> passen.</td></tr>
+    <tr><td>Compilerfehler „cannot find symbol“ oder „variable … might not have been initialized“ in einer Lambda</td><td>Ein Baustein wird in einer Lambda benutzt, bevor er erzeugt wurde. Lösung: Bausteine als Felder speichern und Aktionen als Methoden schreiben (siehe Beispiel oben).</td></tr>
+    <tr><td>Fenster friert ein</td><td>Langsame Aufgaben (Netzwerk, große Rechnungen) in <code>imHintergrund(...)</code> ausführen.</td></tr>
+    <tr><td>Bausteine in falscher Reihenfolge</td><td>Bausteine erscheinen in Aufrufreihenfolge. Bei freien Karten also erst <code>abschnitt()</code>, dann dessen Inhalt.</td></tr>
+  </table>
+  </div>
+</section>
+
+<!-- ===================================================== -->
+<section class="kapitel" id="fehler">
+  <h2><span class="nr">10</span>Fehlerbehandlung</h2>
+  <p>
+    Fehler werden zentral in <code>Karte.ausfuehren()</code> behandelt und unten im Fenster angezeigt.
+    Die Meldung verschwindet nach 6 Sekunden, bei der nächsten Aktion oder per Klick.
+  </p>
+  <figure>
+    <img src="bilder/fehlermeldung.png" alt="Fehlermeldung bei Division durch 0">
+    <figcaption>Abb. 4: Meldung bei Division durch 0 in der Karte „Masseanteil“</figcaption>
+  </figure>
+  <div class="tabelle-rahmen">
+  <table>
+    <tr><th>Exception</th><th>Anzeige</th><th>Konsole</th></tr>
+    <tr><td><code>Fehlermeldung</code></td><td>Text unverändert</td><td>nichts</td></tr>
+    <tr><td>jede andere Exception</td><td>„Unerwarteter Fehler: “ + Nachricht (bzw. Klassenname)</td><td>Stacktrace</td></tr>
+  </table>
+  </div>
+  <p>Typische Fehlermeldungen, die das Grundgerüst selbst erzeugt:</p>
+  <ul>
+    <li>„Bitte einen Wert für „Masse“ eingeben.“: Feld leer</li>
+    <li>„„abc“ ist keine gültige Zahl (Masse).“: Eingabe nicht lesbar</li>
+    <li>„Das Ergebnis ist nicht definiert – wurde durch 0 geteilt?“: Ergebnis unendlich oder NaN</li>
+    <li>„Ungültige Zahl – der alte Wert wurde beibehalten.“: ungültige Eingabe in einer Tabellenzelle</li>
+  </ul>
+  <div class="hinweis">
+    <strong>Eigene Prüfungen</strong>
+    <p>In jeder Aktion genügt <code>throw new Fehlermeldung("…")</code>. Ein <code>try/catch</code> ist nicht nötig.</p>
+  </div>
+</section>
+
+<!-- ===================================================== -->
+<section class="kapitel" id="zahlen">
+  <h2><span class="nr">11</span>Zahlenformat</h2>
+  <h3>Eingabe</h3>
+  <p>
+    Komma wird vor dem Einlesen durch Punkt ersetzt, danach liest <code>Double.parseDouble</code> die Zahl.
+    Damit funktionieren <code>12,5</code>, <code>12.5</code>, <code>1,5e-3</code> und <code>6.022E23</code>.
+    <code>NaN</code> und <code>Infinity</code> werden abgelehnt. Tausendertrennzeichen werden nicht unterstützt.
+  </p>
+  <h3>Ergebnisanzeige</h3>
+  <div class="tabelle-rahmen">
+  <table>
+    <tr><th>Betrag des Ergebnisses</th><th>Darstellung</th><th>Beispiel</th></tr>
+    <tr><td>0</td><td>„0“</td><td>0</td></tr>
+    <tr><td>0,001 bis unter 1 000 000</td><td>Dezimalzahl, 6 signifikante Stellen</td><td>0,213895</td></tr>
+    <tr><td>sonst</td><td>wissenschaftlich, 4 signifikante Stellen</td><td>6,022 · 10²³</td></tr>
+  </table>
+  </div>
+  <p>
+    Beim Kopieren eines Ergebnisses und in Tabellenzellen wird die Zahl dagegen <strong>ungerundet</strong>
+    und ohne Exponentenschreibweise ausgegeben, damit sie sich wieder einfügen lässt.
+  </p>
+</section>
+
+<!-- ===================================================== -->
+<section class="kapitel" id="styling">
+  <h2><span class="nr">12</span>Styling</h2>
+  <p>
+    Das Aussehen wird vollständig über <code>src/ress/style.css</code> (JavaFX-CSS) gesteuert.
+    Die Farben sind oben in <code>.root</code> als Variablen definiert und werden überall wiederverwendet;
+    eine neue Akzentfarbe muss also nur an einer Stelle geändert werden.
+  </p>
+  <pre><code>.root {
+    -akzent: #16a34a;          <span class="c">/* Hauptfarbe: Buttons, Auswahl, Fokus */</span>
+    -akzent-dunkel: #15803d;   <span class="c">/* Hover */</span>
+    -akzent-hell: #f0fdf4;     <span class="c">/* Hintergrund Ergebnisse, aktiver Eintrag */</span>
+    -text: #111827;
+    -hintergrund: #f5f6f8;
+    ...
+}</code></pre>
+  <div class="hinweis">
+    <strong>Diagrammfarben</strong>
+    <p>Die Linien- und Punktfarbe des Diagramms (<code>.default-color0…</code>) steht als fester Farbwert im CSS
+    und muss bei einem Farbwechsel separat angepasst werden.</p>
+  </div>
+  <h3>Wichtige Style-Klassen</h3>
+  <div class="tabelle-rahmen">
+  <table>
+    <tr><th>Klasse</th><th>Element</th></tr>
+    <tr><td><code>.seitenleiste</code>, <code>.nav-eintrag</code></td><td>Seitenleiste und ihre Einträge</td></tr>
+    <tr><td><code>.karte-titel</code>, <code>.karte-beschreibung</code></td><td>Überschrift und Untertitel einer Karte</td></tr>
+    <tr><td><code>.abschnitt</code>, <code>.abschnitt-titel</code></td><td>weiße Kästen</td></tr>
+    <tr><td><code>.feld-beschriftung</code>, <code>.mit-einheit</code>, <code>.einheit</code></td><td>Feldbeschriftung und Einheiten-Anhang</td></tr>
+    <tr><td><code>.ergebnis</code>, <code>.ergebnis-wert</code>, <code>.ergebnis-einheit</code></td><td>Ergebnisfelder der Formelkarten</td></tr>
+    <tr><td><code>.toast</code>, <code>.toast-fehler</code>, <code>.toast-info</code></td><td>Meldungen unten im Fenster</td></tr>
+  </table>
+  </div>
+</section>
+
+<!-- ===================================================== -->
+<section class="kapitel" id="konfiguration">
+  <h2><span class="nr">13</span>Build &amp; Konfiguration</h2>
+  <h3><code>.vscode/settings.json</code> (Repository-Wurzel)</h3>
+  <p>
+    Teilt der Java-Erweiterung mit, wo Quellen (<code>Chemierechner/Chemierechner/src</code>) und Ausgabe
+    (<code>…/bin</code>) liegen, bindet alle JARs aus <code>~/javafx-sdk-25.0.4/lib</code> ein und legt JDK 25 fest.
+  </p>
+  <div class="warnung">
+    <strong>Wichtig</strong>
+    <p>VS Code liest nur den <code>.vscode</code>-Ordner im geöffneten Ordner. Wird statt der Repository-Wurzel
+    direkt <code>Chemierechner/Chemierechner</code> geöffnet, gilt die dortige, separate Konfiguration.</p>
+  </div>
+  <h3><code>.vscode/launch.json</code></h3>
+  <p>Startkonfiguration „Chemierechner - STARTEN“ mit Hauptklasse <code>gui.ChemierechnerApp</code> und den JVM-Argumenten:</p>
+  <pre><code>--module-path ~/javafx-sdk-25.0.4/lib
+--add-modules javafx.controls,javafx.fxml,javafx.graphics,javafx.base,javafx.media,javafx.web
+--enable-native-access=javafx.graphics,javafx.media,javafx.web</code></pre>
+  <p>
+    <code>--module-path</code> und <code>--add-modules</code> sind nötig, weil JavaFX nicht im JDK enthalten ist.
+    <code>--enable-native-access</code> unterdrückt Warnungen neuerer Java-Versionen beim Laden der nativen JavaFX-Bibliotheken.
+  </p>
+  <h3><code>run.sh</code></h3>
+  <p>Kompiliert und startet ohne IDE: <code>bin/</code> löschen → <code>javac</code> → Ressourcen kopieren → <code>java</code>.</p>
+  <h3><code>.gitignore</code></h3>
+  <p><code>bin/</code> und <code>*.class</code> werden nicht versioniert, weil sie bei jedem Build neu entstehen.</p>
+</section>
+
+<!-- ===================================================== -->
+<section class="kapitel" id="grenzen">
+  <h2><span class="nr">14</span>Bekannte Einschränkungen</h2>
+  <div class="tabelle-rahmen">
+  <table>
+    <tr><th>Bereich</th><th>Einschränkung</th></tr>
+    <tr><td>AI-Modus</td><td><code>modelAdapter.extractResponse</code> sucht das Ende der Antwort beim nächsten <code>"</code>. Enthält die Antwort ein maskiertes Anführungszeichen (<code>\"</code>), wird sie dort abgeschnitten. Unicode-Escapes wie <code>ä</code> werden nicht zurückübersetzt.</td></tr>
+    <tr><td>AI-Modus</td><td>Kein Gesprächsverlauf: Jede Frage wird ohne Kontext der vorherigen gestellt.</td></tr>
+    <tr><td>Formelkarten</td><td>Es wird immer in eine Richtung gerechnet; Umstellen nach einer anderen Größe erfordert eine eigene Karte.</td></tr>
+    <tr><td>Formelkarten</td><td>Keine Einheitenumrechnung: Die Werte müssen in den angezeigten (bzw. einheitlichen) Einheiten eingegeben werden.</td></tr>
+    <tr><td>Partialdruck</td><td>Der Stoffmengenanteil wird nicht auf den Bereich 0–1 geprüft.</td></tr>
+    <tr><td>Titration</td><td>Die Konstruktorparameter von <code>Titration(pH, volumen)</code> werden gespeichert, aber nicht verwendet. Daten gehen beim Beenden verloren (kein Speichern/Laden).</td></tr>
+    <tr><td>Groesen</td><td><code>GroessenReader</code> ist nicht in die Oberfläche eingebunden und liest die Datei über einen relativen Pfad, der vom Arbeitsverzeichnis abhängt.</td></tr>
+    <tr><td>Code</td><td>Einige Klassennamen beginnen mit Kleinbuchstaben (<code>molaresVolumen</code>, <code>modelAdapter</code>, …), entgegen der Java-Konvention. Es gibt keine automatisierten Tests.</td></tr>
+    <tr><td>Konfiguration</td><td>Pfade zu JDK und JavaFX sind fest in den Konfigurationsdateien hinterlegt; auf einem anderen Rechner müssen sie angepasst werden.</td></tr>
+  </table>
+  </div>
+</section>
+
+<!-- ===================================================== -->
+<section class="kapitel" id="ausblick">
+  <h2><span class="nr">15</span>Ausblick</h2>
+  <ul>
+    <li>Formelkarten, die nach jeder beliebigen Größe auflösen (zwei von drei Werten eingeben)</li>
+    <li>Einheitenauswahl pro Feld, gestützt auf <code>groessen.txt</code></li>
+    <li>Export der Titrationskurve als Bild oder CSV, Speichern und Laden von Messreihen</li>
+    <li>AI-Modus mit Gesprächsverlauf und robustem JSON-Parsing</li>
+    <li>Weitere Rechner, z.B. Dichte, Konzentration, ideales Gasgesetz, pH-Wert</li>
+    <li>Unit-Tests für die Fachlogik (<code>Berechnungen</code>) und <code>Zahlenformat</code></li>
+  </ul>
+</section>
+
+<footer>Chemierechner · Softwaredokumentation · Stand 31.10.2026</footer>
+
+</div>
+</main>
+
+<script>
+  // Aktives Kapitel in der Sidebar hervorheben
+  const links = [...document.querySelectorAll('.sidebar nav a')];
+  const ziele = links
+    .map(a => document.querySelector(a.getAttribute('href')))
+    .filter(Boolean);
+
+  function markieren() {
+    let aktuell = ziele[0];
+    for (const ziel of ziele) {
+      if (ziel.getBoundingClientRect().top <= 120) aktuell = ziel;
+    }
+    links.forEach(a => a.classList.toggle('aktiv', a.getAttribute('href') === '#' + aktuell.id));
+  }
+  document.addEventListener('scroll', markieren, { passive: true });
+  markieren();
+
+  // Mobil: Menü auf- und zuklappen
+  const knopf = document.querySelector('.menue-knopf');
+  knopf.addEventListener('click', () => document.body.classList.toggle('menue-offen'));
+  links.forEach(a => a.addEventListener('click', () => document.body.classList.remove('menue-offen')));
+</script>
+</body>
+</html>

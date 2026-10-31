@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Chemierechner - STARTEN",
+            "request": "launch",
+            "mainClass": "gui.ChemierechnerApp",
+            "cwd": "${workspaceFolder}/Chemierechner/Chemierechner",
+            "javaHome": "/usr/lib/jvm/java-25-openjdk-amd64",
+            "vmArgs": "--module-path /home/alex/javafx-sdk-25.0.4/lib --add-modules javafx.controls,javafx.fxml,javafx.graphics,javafx.base,javafx.media,javafx.web --enable-native-access=javafx.graphics,javafx.media,javafx.web"
+        }
+    ]
+}

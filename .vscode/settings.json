@@ -1,0 +1,17 @@
+{
+    "java.jdt.ls.java.home": "/usr/lib/jvm/java-25-openjdk-amd64",
+    "java.project.sourcePaths": ["Chemierechner/Chemierechner/src"],
+    "java.project.outputPath": "Chemierechner/Chemierechner/bin",
+    "java.project.referencedLibraries": [
+        "Chemierechner/Chemierechner/lib/**/*.jar",
+        "/home/alex/javafx-sdk-25.0.4/lib/*.jar"
+    ],
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-25",
+            "path": "/usr/lib/jvm/java-25-openjdk-amd64",
+            "default": true
+        }
+    ],
+    "java.server.launchMode": "Standard"
+}

@@ -1,112 +1,454 @@
-/* =========================
-   GRUNDSTIL
-   ========================= */
+/* =========================================================
+   Chemierechner – Stylesheet
+   Farben zentral hier ändern, sie werden unten wiederverwendet.
+   ========================================================= */
 .root {
-    -fx-font-family: "Segoe UI", "Inter", "Arial";
-    -fx-font-size: 13px;
-    -fx-background-color: #f5f7f6;
+    -akzent: #16a34a;
+    -akzent-dunkel: #15803d;
+    -akzent-tief: #14532d;
+    -akzent-hell: #f0fdf4;
+    -akzent-rand: #bbf7d0;
+    -text: #111827;
+    -text-mittel: #374151;
+    -text-leise: #6b7280;
+    -rand: #e5e7eb;
+    -rand-feld: #d1d5db;
+    -hintergrund: #f5f6f8;
+
+    -fx-font-size: 14px;
+    -fx-background-color: -hintergrund;
+    -fx-accent: -akzent;
+    -fx-focus-color: -akzent;
+    -fx-faint-focus-color: #16a34a22;
 }
 
-/* =========================
-   TABPANE
-   ========================= */
-
-/* Kopfbereich */
-.tab-pane .tab-header-area {
-    -fx-background-color: linear-gradient(to bottom, #2e7d32, #1b5e20);
-    -fx-padding: 4 4 0 4;
+/* =========================================================
+   SEITENLEISTE
+   ========================================================= */
+.seitenleiste {
+    -fx-background-color: white;
+    -fx-border-color: -rand;
+    -fx-border-width: 0 1 0 0;
+    -fx-padding: 22 14 22 14;
+    -fx-pref-width: 250;
+    -fx-min-width: 250;
 }
 
-/* Einzelne Tabs */
-.tab-pane .tab {
-    -fx-background-color: #4caf50;
-    -fx-background-radius: 8 8 0 0;
-    -fx-padding: 6 14 6 14;
+.app-kopf {
+    -fx-padding: 0 8 0 8;
 }
 
-/* Aktiver Tab */
-.tab-pane .tab:selected {
-    -fx-background-color: #81c784;
+.app-titel {
+    -fx-font-size: 19px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -text;
 }
 
-/* Hover */
-.tab-pane .tab:hover {
-    -fx-background-color: #66bb6a;
+.nav-scroll,
+.nav-scroll > .viewport {
+    -fx-background-color: transparent;
+    -fx-background: white;
+    -fx-padding: 0;
 }
 
-/* Tab-Text */
-.tab-pane .tab-label {
-    -fx-text-fill: white;
+.nav-eintrag {
+    -fx-background-color: transparent;
+    -fx-background-radius: 8;
+    -fx-background-insets: 0;
+    -fx-text-fill: -text-mittel;
+    -fx-padding: 10 14 10 14;
+    -fx-alignment: center-left;
+    -fx-cursor: hand;
+}
+
+.nav-eintrag:hover {
+    -fx-background-color: #f3f4f6;
+}
+
+.nav-eintrag:selected {
+    -fx-background-color: -akzent-hell;
+    -fx-text-fill: -akzent-dunkel;
     -fx-font-weight: bold;
 }
 
-/* Inhaltsbereich */
-.tab-pane .tab-content-area {
-    -fx-background-color: #ffffff;
-    -fx-padding: 20;
+/* =========================================================
+   INHALTSBEREICH
+   ========================================================= */
+.inhalt-scroll,
+.inhalt-scroll > .viewport {
+    -fx-background-color: transparent;
+    -fx-background: -hintergrund;
+    -fx-padding: 0;
 }
 
-/* =========================
-   LABELS
-   ========================= */
-.label {
-    -fx-text-fill: #2e2e2e;
-    -fx-font-weight: 600;
+.seite {
+    -fx-padding: 40 48 64 48;
 }
 
-/* =========================
-   TEXTFIELDS
-   ========================= */
+.karte-titel {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -text;
+}
+
+.karte-beschreibung {
+    -fx-font-size: 15px;
+    -fx-text-fill: -text-leise;
+}
+
+.abschnitt {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-border-color: -rand;
+    -fx-border-radius: 14;
+    -fx-padding: 24 26 26 26;
+    -fx-effect: dropshadow(gaussian, rgba(17, 24, 39, 0.05), 16, 0, 0, 4);
+}
+
+.abschnitt-titel {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -text;
+}
+
+.feld-beschriftung {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -text-mittel;
+}
+
+/* =========================================================
+   EINGABEFELDER
+   ========================================================= */
 .text-field {
-    -fx-background-radius: 6;
-    -fx-border-radius: 6;
-    -fx-border-color: #c8e6c9;
-    -fx-padding: 6 8;
+    -fx-background-color: -rand-feld, white;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 8, 7;
+    -fx-padding: 9 12 9 12;
+    -fx-text-fill: -text;
+    -fx-prompt-text-fill: #9ca3af;
+    -fx-highlight-fill: -akzent-rand;
+    -fx-highlight-text-fill: -text;
 }
 
-/* Fokus */
 .text-field:focused {
-    -fx-border-color: #4caf50;
-    -fx-background-color: #f1f8e9;
+    -fx-background-color: -akzent, white;
+    -fx-background-insets: 0, 1.5;
+    -fx-effect: dropshadow(gaussian, rgba(22, 163, 74, 0.22), 8, 0.4, 0, 0);
 }
 
-/* =========================
-   TEXTAREA (KI-Antwort)
-   ========================= */
+/* Feld mit Einheit rechts daneben */
+.mit-einheit .text-field {
+    -fx-background-radius: 8 0 0 8, 7 0 0 7;
+}
+
+.einheit {
+    -fx-background-color: -rand-feld, #f9fafb;
+    -fx-background-insets: 0, 1 1 1 0;
+    -fx-background-radius: 0 8 8 0, 0 7 7 0;
+    -fx-padding: 0 14 0 14;
+    -fx-text-fill: -text-leise;
+    -fx-alignment: center;
+}
+
 .text-area {
-    -fx-background-radius: 6;
-    -fx-border-radius: 6;
-    -fx-border-color: #c8e6c9;
-    -fx-control-inner-background: #f9fff9;
-    -fx-padding: 8;
+    -fx-background-color: -rand-feld, white;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 8, 7;
+    -fx-padding: 1;
+    -fx-text-fill: -text;
+    -fx-highlight-fill: -akzent-rand;
+    -fx-highlight-text-fill: -text;
 }
 
 .text-area:focused {
-    -fx-border-color: #4caf50;
+    -fx-background-color: -akzent, white;
+    -fx-background-insets: 0, 1.5;
 }
 
-/* =========================
+.text-area .content {
+    -fx-background-color: white;
+    -fx-background-radius: 7;
+    -fx-padding: 10 12 10 12;
+}
+
+.text-area .scroll-pane,
+.text-area .scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* =========================================================
    BUTTONS
-   ========================= */
+   ========================================================= */
 .button {
-    -fx-background-color: linear-gradient(to bottom, #4caf50, #388e3c);
+    -fx-background-color: -akzent;
+    -fx-background-radius: 8;
+    -fx-background-insets: 0;
     -fx-text-fill: white;
     -fx-font-weight: bold;
-    -fx-background-radius: 6;
-    -fx-padding: 8 18;
+    -fx-padding: 10 20 10 20;
+    -fx-cursor: hand;
 }
 
 .button:hover {
-    -fx-background-color: linear-gradient(to bottom, #66bb6a, #43a047);
+    -fx-background-color: -akzent-dunkel;
 }
 
 .button:pressed {
-    -fx-background-color: #2e7d32;
+    -fx-background-color: -akzent-tief;
 }
 
-/* =========================
-   SCROLLBAR (dezent)
-   ========================= */
-.scroll-bar:vertical .thumb {
-    -fx-background-color: #a5d6a7;
+.button:focused {
+    -fx-effect: dropshadow(gaussian, rgba(22, 163, 74, 0.35), 8, 0.4, 0, 0);
+}
+
+/* =========================================================
+   ERGEBNISSE (Formelkarten)
+   ========================================================= */
+.ergebnis {
+    -fx-background-color: -akzent-hell;
+    -fx-border-color: -akzent-rand;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 14 18 16 18;
+}
+
+.ergebnis:hover {
+    -fx-border-color: -akzent;
+}
+
+.ergebnis-beschriftung {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -akzent-dunkel;
+}
+
+.ergebnis-wert {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -akzent-tief;
+}
+
+.ergebnis-einheit {
+    -fx-font-size: 16px;
+    -fx-text-fill: -akzent-dunkel;
+}
+
+/* =========================================================
+   MELDUNGEN (unten im Fenster)
+   ========================================================= */
+.toast {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 12 18 12 18;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.18), 22, 0, 0, 6);
+}
+
+.toast-fehler {
+    -fx-background-color: #fef2f2;
+    -fx-border-color: #fecaca;
+}
+
+.toast-fehler .label {
+    -fx-text-fill: #991b1b;
+    -fx-font-weight: bold;
+}
+
+.toast-info {
+    -fx-background-color: #1f2937;
+}
+
+.toast-info .label {
+    -fx-text-fill: white;
+}
+
+.toast .progress-indicator {
+    -fx-progress-color: white;
+}
+
+/* =========================================================
+   TABELLE
+   ========================================================= */
+.table-view {
+    -fx-background-color: -rand, white;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 8, 7;
+    -fx-padding: 1;
+}
+
+.table-view:focused {
+    -fx-background-color: -rand, white;
+    -fx-background-insets: 0, 1;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #f9fafb;
+    -fx-background-radius: 7 7 0 0;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: transparent;
+    -fx-border-color: -rand;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 6 0 6 0;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: -text-leise;
+    -fx-font-weight: bold;
+    -fx-alignment: center-left;
+    -fx-padding: 0 12 0 12;
+}
+
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #f3f4f6 transparent;
+    -fx-table-cell-border-color: transparent;
+}
+
+.table-row-cell:empty {
+    -fx-border-color: transparent;
+}
+
+.table-row-cell:hover:filled {
+    -fx-background-color: #f9fafb;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: -akzent-hell;
+}
+
+.table-cell {
+    -fx-padding: 8 12 8 12;
+    -fx-text-fill: -text;
+}
+
+.table-row-cell:selected .table-cell {
+    -fx-text-fill: -text;
+}
+
+.table-cell .text-field {
+    -fx-padding: 2 6 2 6;
+    -fx-background-radius: 4, 3;
+    -fx-effect: null;
+}
+
+.table-view .placeholder .label {
+    -fx-text-fill: #9ca3af;
+    -fx-font-weight: normal;
+}
+
+/* =========================================================
+   DIAGRAMM
+   ========================================================= */
+.chart {
+    -fx-padding: 0;
+}
+
+.chart-plot-background {
+    -fx-background-color: white;
+}
+
+.chart-vertical-grid-lines,
+.chart-horizontal-grid-lines {
+    -fx-stroke: #eef0f2;
+}
+
+.chart-alternative-row-fill,
+.chart-alternative-column-fill {
+    -fx-fill: transparent;
+    -fx-stroke: transparent;
+}
+
+.chart-vertical-zero-line,
+.chart-horizontal-zero-line {
+    -fx-stroke: #d1d5db;
+}
+
+.axis {
+    -fx-tick-label-fill: #6b7280;
+}
+
+.axis-label {
+    -fx-text-fill: #374151;
+    -fx-font-weight: bold;
+}
+
+.default-color0.chart-series-line {
+    -fx-stroke: #16a34a;
+    -fx-stroke-width: 2.5px;
+}
+
+.default-color0.chart-line-symbol {
+    -fx-background-color: #16a34a, white;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 6px;
+    -fx-padding: 5px;
+}
+
+/* =========================================================
+   SCROLLBALKEN (dezent)
+   ========================================================= */
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #d1d5db;
+    -fx-background-radius: 8;
+    -fx-background-insets: 3;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #9ca3af;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 4;
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-background-color: transparent;
+}
+
+.corner {
+    -fx-background-color: transparent;
+}
+
+/* =========================================================
+   KONTEXTMENÜ & TOOLTIP
+   ========================================================= */
+.context-menu {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: -rand;
+    -fx-border-radius: 8;
+    -fx-padding: 4;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.12), 14, 0, 0, 4);
+}
+
+.context-menu .menu-item {
+    -fx-background-radius: 6;
+    -fx-padding: 6 12 6 12;
+}
+
+.context-menu .menu-item:focused {
+    -fx-background-color: -akzent-hell;
+}
+
+.context-menu .menu-item:focused .label {
+    -fx-text-fill: -akzent-dunkel;
+}
+
+.tooltip {
+    -fx-background-color: #1f2937;
+    -fx-background-radius: 6;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-padding: 6 10 6 10;
 }

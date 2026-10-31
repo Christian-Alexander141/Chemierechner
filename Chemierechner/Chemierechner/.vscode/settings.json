@@ -1,18 +1,25 @@
 {
+    "java.home": "/usr/lib/jvm/java-25-openjdk-amd64",
     "java.project.sourcePaths": ["src"],
     "java.project.outputPath": "bin",
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
-        "c:\\java\\openjfx-25.0.1_windows-x64_bin-sdk\\javafx-sdk-25.0.1\\lib\\javafx.base.jar",
-        "c:\\java\\openjfx-25.0.1_windows-x64_bin-sdk\\javafx-sdk-25.0.1\\lib\\javafx.controls.jar",
-        "c:\\java\\openjfx-25.0.1_windows-x64_bin-sdk\\javafx-sdk-25.0.1\\lib\\javafx.fxml.jar",
-        "c:\\java\\openjfx-25.0.1_windows-x64_bin-sdk\\javafx-sdk-25.0.1\\lib\\javafx.graphics.jar",
-        "c:\\java\\openjfx-25.0.1_windows-x64_bin-sdk\\javafx-sdk-25.0.1\\lib\\javafx.media.jar",
-        "c:\\java\\openjfx-25.0.1_windows-x64_bin-sdk\\javafx-sdk-25.0.1\\lib\\javafx.swing.jar",
-        "c:\\java\\openjfx-25.0.1_windows-x64_bin-sdk\\javafx-sdk-25.0.1\\lib\\javafx.web.jar",
-        "c:\\java\\openjfx-25.0.1_windows-x64_bin-sdk\\javafx-sdk-25.0.1\\lib\\javafx-swt.jar",
-        "c:\\java\\openjfx-25.0.1_windows-x64_bin-sdk\\javafx-sdk-25.0.1\\lib\\jdk.jsobject.jar",
-        "c:\\java\\openjfx-25.0.1_windows-x64_bin-sdk\\javafx-sdk-25.0.1\\lib\\jfx.incubator.input.jar",
-        "c:\\java\\openjfx-25.0.1_windows-x64_bin-sdk\\javafx-sdk-25.0.1\\lib\\jfx.incubator.richtext.jar"
-    ]
+        "/home/alex/javafx-sdk-25.0.4/lib/javafx.base.jar",
+        "/home/alex/javafx-sdk-25.0.4/lib/javafx.controls.jar",
+        "/home/alex/javafx-sdk-25.0.4/lib/javafx.fxml.jar",
+        "/home/alex/javafx-sdk-25.0.4/lib/javafx.graphics.jar",
+        "/home/alex/javafx-sdk-25.0.4/lib/javafx.media.jar",
+        "/home/alex/javafx-sdk-25.0.4/lib/javafx.swing.jar",
+        "/home/alex/javafx-sdk-25.0.4/lib/javafx.web.jar",
+        "/home/alex/javafx-sdk-25.0.4/lib/javafx-swt.jar",
+        "/home/alex/javafx-sdk-25.0.4/lib/jdk.jsobject.jar"
+    ],
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-25",
+            "path": "/usr/lib/jvm/java-25-openjdk-amd64",
+            "default": true
+        }
+    ],
+    "java.server.launchMode": "standard"
 }
